@@ -10,14 +10,18 @@ import java.util.Iterator;
 public class FrameProviderFile implements FrameProvider {
     private BufferedReader bufferedReader;
     private final Iterator<Frame> iterator;
+	private final FrameDescriptior frameDescriptior;
 	
-	public FrameProviderFile(File framesFile) throws FileNotFoundException {
+	public FrameProviderFile(File framesFile, FrameDescriptior frameDescription) throws FileNotFoundException {
+		this.frameDescriptior = frameDescription;
 		bufferedReader = new BufferedReader(new FileReader(framesFile));
 		iterator = new BufferedFrameIterator(bufferedReader);
+		
 	}
 	private class BufferedFrameIterator implements Iterator<Frame> {
 		private BufferedReader bufferedReader;
-        private String line;
+		private String line = null;
+        private String buffer = "";
         
 		public BufferedFrameIterator(BufferedReader bufferedReader) {
 			(this.bufferedReader = bufferedReader).getClass();
@@ -29,25 +33,30 @@ public class FrameProviderFile implements FrameProvider {
 		}
 
 		public Frame next() {
-			Frame retval = new Frame(line);
+			Frame retval = new Frame(buffer);
+			buffer = "";
 			advance();
 			return retval;
 		}
         private void advance() {
             try {
-                line = bufferedReader.readLine();
+            	for (int i = 0; i < frameDescriptior.getFrameHeight() && (line = bufferedReader.readLine()) !=null ; i++) {
+            		buffer += line;
+				}
+                //line = bufferedReader.readLine();
             } catch (IOException e) {
             	System.err.println(e.getMessage());
-            }
-            if ( line == null && FrameProviderFile.this.bufferedReader != null ) {
-                try {
-                	FrameProviderFile.this.bufferedReader.close();
+            } finally {
+				if ( line == null && bufferedReader != null ) {
+                    try {
+                    	bufferedReader.close();
+                    }
+                    catch (IOException e) { 
+                    	System.err.println(e.getMessage());
+                    }
                 }
-                catch (IOException e) { 
-                	System.err.println(e.getMessage());
-                }
-                FrameProviderFile.this.bufferedReader = null;
             }
+
         }
 		public void remove() {
 			 throw new UnsupportedOperationException("Remove not supported on BufferedReader iteration.");

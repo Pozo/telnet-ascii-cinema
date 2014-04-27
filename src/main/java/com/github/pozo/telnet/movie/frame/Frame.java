@@ -17,8 +17,8 @@ public class Frame {
 
 	private String sanitizeDataLineEnds() {
 		String sanitizedData = data.replaceAll("\\r", "");
-		sanitizedData = data.replaceAll("\\n", "");
-		return sanitizedData;
+		sanitizedData = sanitizedData.replaceAll("\\n", "");
+		return data;
 	}
 
 	private String appendDataCorrectLineEnd(String sanitizedData) {

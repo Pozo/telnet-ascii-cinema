@@ -10,6 +10,7 @@ public class Canvas {
 	// @see: http://ascii-table.com/ansi-escape-sequences-vt-100.php
 	private static final byte[] JMPHOME = "\u001B[H".getBytes();
 	private static final byte[] CLEARSCRN = "\u001B[2J".getBytes();
+	private static final byte[] NEXTLINE = "\u001BE".getBytes();
 
 	private final OutputStream surface;
 	

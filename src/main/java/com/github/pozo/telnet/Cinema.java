@@ -7,6 +7,7 @@ import java.net.Socket;
 
 import com.github.pozo.telnet.movie.Canvas;
 import com.github.pozo.telnet.movie.Movie;
+import com.github.pozo.telnet.movie.frame.FrameDescriptior;
 import com.github.pozo.telnet.movie.frame.FrameProvider;
 import com.github.pozo.telnet.movie.frame.FrameProviderFile;
 import com.github.pozo.telnet.movie.frame.FrameProviderMemory;
@@ -20,12 +21,14 @@ public class Cinema {
 		while(true) {
 			Socket client = server.accept();
 			
-			FrameProvider frameProvider = new FrameProviderFile(new File("movie"));
+			FrameDescriptior frameDescription = new FrameDescriptior(80, 22);
+			File framesSource = new File("movie");
+			FrameProvider frameProvider = new FrameProviderFile(framesSource, frameDescription);
 			//FrameProvider frameProvider = new FrameProviderMemory();
 			Canvas canvas = new Canvas(client.getOutputStream());
 			
 			Movie movie = new Movie(frameProvider, canvas);
-			movie.setFrameRate(10);
+			movie.setFrameRate(1);
 			movie.play();
 
 			client.close();
